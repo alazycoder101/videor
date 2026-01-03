@@ -45,7 +45,7 @@ Create the bucket manually (or via `aws s3api create-bucket` / MinIO UI) before 
 3. Form submission stays HTML-first and enqueues `VideoJobProcessorJob`.
 
 ## Testing & quality
-- Run the Rails test suite with `mise exec -- bin/rails test`.
+- Because Ruby 4.0 ships with Minitest 6, `bin/rails test` currently fails to discover specs. Until upstream fixes land, run the suite via `mise exec -- bundle exec ruby -Itest -e 'Dir["test/**/*_test.rb"].sort.each { |f| load File.expand_path(f) }'`.
 - Tailwind builds run automatically when the suite boots; this ensures missing class definitions fail fast.
 - RuboCop and Brakeman binstubs are available (`bin/rubocop`, `bin/brakeman`) if you need extra checks.
 

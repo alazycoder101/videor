@@ -1,5 +1,5 @@
 class VideoJob < ApplicationRecord
-  enum status: {
+  enum :status, {
     queued: 0,
     processing: 1,
     finished: 2,

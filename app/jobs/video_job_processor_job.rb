@@ -3,7 +3,7 @@ class VideoJobProcessorJob < ApplicationJob
 
   def perform(video_job_id)
     video_job = VideoJob.find(video_job_id)
-    storage = StorageClient.new
+    storage = storage_client
 
     video_job.processing!
 
@@ -55,5 +55,9 @@ class VideoJobProcessorJob < ApplicationJob
   def build_output_key(video_job)
     timestamp = Time.current.utc.strftime("%Y%m%d%H%M%S")
     "outputs/#{video_job.id}-#{timestamp}.mp4"
+  end
+
+  def storage_client
+    StorageClient.new
   end
 end

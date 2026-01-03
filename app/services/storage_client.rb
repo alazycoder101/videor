@@ -5,14 +5,15 @@ class StorageClient
 
   attr_reader :bucket, :client
 
-  def initialize(bucket: ENV.fetch("VIDEO_JOBS_BUCKET", "video-jobs"), region: ENV["AWS_REGION"], endpoint: ENV["S3_ENDPOINT"])
+  def initialize(bucket: ENV.fetch("VIDEO_JOBS_BUCKET", "video-jobs"), region: ENV["AWS_REGION"], endpoint: ENV["S3_ENDPOINT"], client: nil, presigner: nil)
     @bucket = bucket
     client_options = { region: region.presence || "us-east-1" }
     if endpoint.present?
       client_options[:endpoint] = endpoint
       client_options[:force_path_style] = true
     end
-    @client = Aws::S3::Client.new(client_options)
+    @client = client || Aws::S3::Client.new(client_options)
+    @presigner = presigner
   end
 
   def generate_object_key(purpose:, filename:)
