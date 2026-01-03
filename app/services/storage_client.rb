@@ -33,8 +33,8 @@ class StorageClient
       key: key,
       signature_expiration: expires_in.from_now,
       conditions: [
-        ["content-length-range", 0, byte_size],
-        ["eq", "$Content-Type", content_type]
+        [ "content-length-range", 0, byte_size ],
+        [ "eq", "$Content-Type", content_type ]
       ]
     )
 
@@ -50,7 +50,7 @@ class StorageClient
   end
 
   def download_to_tempfile(key)
-    tempfile = Tempfile.new(["video-job", File.extname(key)])
+    tempfile = Tempfile.new([ "video-job", File.extname(key) ])
     tempfile.binmode
     client.get_object(bucket:, key:) do |chunk|
       tempfile.write(chunk)

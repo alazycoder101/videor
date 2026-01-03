@@ -9,7 +9,7 @@ class VideoJobProcessorJob < ApplicationJob
 
     audio_file = storage.download_to_tempfile(video_job.audio_key)
     image_file = storage.download_to_tempfile(video_job.image_key)
-    output_file = Tempfile.new(["video-job-output", ".mp4"])
+    output_file = Tempfile.new([ "video-job-output", ".mp4" ])
     output_file.binmode
 
     run_ffmpeg(audio_file.path, image_file.path, output_file.path)
@@ -26,7 +26,7 @@ class VideoJobProcessorJob < ApplicationJob
     video_job.update!(status: :failed, error_message: e.message.truncate(255)) if video_job&.persisted?
     raise
   ensure
-    [audio_file, image_file, output_file].compact.each do |file|
+    [ audio_file, image_file, output_file ].compact.each do |file|
       file.close!
     rescue StandardError
       # no-op

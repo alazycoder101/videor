@@ -26,6 +26,6 @@ class VideoJobTest < ActiveSupport::TestCase
     mine = VideoJob.create!(client_id: "cookie-123", audio_key: "audio/a.mp3", image_key: "image/a.jpg")
     VideoJob.create!(client_id: "cookie-456", audio_key: "audio/b.mp3", image_key: "image/b.jpg")
 
-    assert_equal [mine], VideoJob.owned_by("cookie-123")
+    assert_equal [ mine ], VideoJob.owned_by("cookie-123")
   end
 end

@@ -38,7 +38,7 @@ class VideoJobProcessorJobTest < ActiveJob::TestCase
     end
 
     def download_to_tempfile(key)
-      file = Tempfile.new(["fixture", File.extname(key)])
+      file = Tempfile.new([ "fixture", File.extname(key) ])
       file.binmode
       file.write("test data")
       file.rewind
