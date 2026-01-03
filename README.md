@@ -1,24 +1,13 @@
-# README
+# Videor
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Hotwire-first Rails 8 application that stitches audio + cover art into shareable MP4s. It uses Turbo Streams for live status, direct-to-storage uploads, and Sidekiq + ffmpeg for rendering.
 
-Things you may want to cover:
+## Local development
 
-* Ruby version
+Toolchain, environment variables, and workflow steps live in [`docs/development.md`](docs/development.md). It covers running `mise exec -- bin/dev`, managing Redis/MinIO, and executing the custom test runner required on Ruby 4.0.
 
-* System dependencies
+## Container image
 
-* Configuration
+The Dockerfile in the project root builds the production image (ffmpeg included) and the GitHub Actions workflow automatically publishes tagged builds to GHCR. See [`docs/containers.md`](docs/containers.md) for details on local builds, runtime environment variables, and how the CI pipeline is configured.
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+For containerized development, copy `.env.compose.example` to `.env.compose`, populate secrets, and run `docker compose up --build`.

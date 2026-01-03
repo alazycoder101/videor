@@ -1,6 +1,48 @@
 version: "3.9"
 
 services:
+  app:
+    build:
+      context: .
+    image: videor:dev
+    command: ./bin/rails server -b 0.0.0.0 -p 3000
+    env_file:
+      - .env.compose
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: sqlite3:///rails/storage/development.sqlite3
+      REDIS_URL: redis://redis:6379/0
+      AWS_REGION: us-east-1
+      S3_ENDPOINT: http://minio:9000
+      STORAGE_HOST_ALLOWLIST: minio
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+    depends_on:
+      - redis
+      - minio
+
+  worker:
+    build:
+      context: .
+    image: videor:dev
+    command: bundle exec sidekiq
+    env_file:
+      - .env.compose
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: sqlite3:///rails/storage/development.sqlite3
+      REDIS_URL: redis://redis:6379/0
+      AWS_REGION: us-east-1
+      S3_ENDPOINT: http://minio:9000
+      STORAGE_HOST_ALLOWLIST: minio
+    volumes:
+      - .:/rails
+    depends_on:
+      - redis
+      - minio
+
   redis:
     image: redis:7-alpine
     ports:
