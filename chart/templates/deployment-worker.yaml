@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "videor.fullname" . }}-worker
+  labels:
+    app.kubernetes.io/name: {{ include "videor.name" . }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.replicaCount.worker }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "videor.name" . }}
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "videor.name" . }}
+        app.kubernetes.io/component: worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["bundle", "exec", "sidekiq"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "videor.fullname" . }}-config
+            - secretRef:
+                name: {{ include "videor.fullname" . }}-secrets

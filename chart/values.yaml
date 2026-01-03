@@ -1,0 +1,30 @@
+image:
+  repository: ghcr.io/OWNER/videor
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount:
+  web: 1
+  worker: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  RAILS_ENV: production
+  REDIS_URL: redis://videor-redis:6379/0
+  AWS_REGION: us-east-1
+  STORAGE_HOST_ALLOWLIST: YOUR_DOWNLOAD_HOST
+
+secrets:
+  railsMasterKey: ""
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  videoJobsBucket: ""
+  databaseUrl: ""
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  port: 6379

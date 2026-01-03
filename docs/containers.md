@@ -52,7 +52,25 @@ The `k8s/` directory contains basic YAML manifests for a web deployment, Sidekiq
    ```
 4. Add your ingress of choice (Traefik in k3s) with a rule pointing to the `videor-web` service.
 
-For a more configurable setup, consider generating a Helm chart that parameterizes replica counts, image tags, and secrets; the current YAML is intentionally minimal to keep k3s experimentation straightforward.
+For a more configurable setup, use the Helm chart in `chart/` (see below).
+
+## Helm chart
+
+The `chart/` directory contains a basic Helm chart that deploys the web app, Sidekiq worker, and (optionally) Redis. To install:
+
+```bash
+helm install videor ./chart \
+  --set image.repository=ghcr.io/<owner>/<repo> \
+  --set image.tag=<tag> \
+  --set secrets.railsMasterKey=$(cat config/master.key) \
+  --set secrets.awsAccessKeyId=... \
+  --set secrets.awsSecretAccessKey=... \
+  --set secrets.videoJobsBucket=... \
+  --set secrets.databaseUrl=postgres://user:pass@host:5432/videor_production \
+  --set env.STORAGE_HOST_ALLOWLIST=download.example.com
+```
+
+Adjust `values.yaml` or pass overrides for replica counts, Redis settings, etc. If you already run Redis externally, set `redis.enabled=false` and point `env.REDIS_URL` at your service.
 
 ## Runtime configuration
 
