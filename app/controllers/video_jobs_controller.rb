@@ -32,7 +32,14 @@ class VideoJobsController < ApplicationController
       redirect_to @video_job, alert: "Hold tight—processing is still running." and return
     end
 
-    redirect_to storage_client.presign_download(@video_job.output_key), allow_other_host: true
+    download_url = storage_client.presign_download(@video_job.output_key)
+
+    if allowed_storage_host?(download_url)
+      redirect_to download_url, allow_other_host: true
+    else
+      Rails.logger.warn("Blocked download redirect for unexpected host: #{download_url.inspect}")
+      redirect_to @video_job, alert: "Download host is not trusted. Try again later."
+    end
   rescue StorageClient::Error => e
     redirect_to @video_job, alert: e.message
   end
@@ -49,5 +56,19 @@ class VideoJobsController < ApplicationController
 
   def video_job_params
     params.require(:video_job).permit(:audio_key, :image_key)
+  end
+
+  def allowed_storage_host?(url)
+    uri = URI.parse(url)
+    return false if uri.host.blank?
+
+    allowed_hosts = ENV.fetch("STORAGE_HOST_ALLOWLIST", "").split(",").map(&:strip).reject(&:blank?)
+    if allowed_hosts.empty? && ENV["S3_ENDPOINT"].present?
+      allowed_hosts << URI.parse(ENV["S3_ENDPOINT"]).host
+    end
+
+    allowed_hosts.include?(uri.host)
+  rescue URI::InvalidURIError
+    false
   end
 end

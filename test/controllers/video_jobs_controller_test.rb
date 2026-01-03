@@ -49,6 +49,46 @@ class VideoJobsControllerTest < ActionDispatch::IntegrationTest
     assert_includes @response.body, "Queued"
   end
 
+  test "download redirects to allowed storage host" do
+    job = create_job_for_current_client
+    job.update!(status: :finished, output_key: "outputs/test.mp4")
+
+    stubbed_client = Struct.new(:url) do
+      def presign_download(_key)
+        url
+      end
+    end.new("https://download.example.test/file.mp4")
+
+    with_stubbed_storage_client(stubbed_client) do
+      ENV["STORAGE_HOST_ALLOWLIST"] = "download.example.test"
+      get download_video_job_path(job)
+      assert_redirected_to stubbed_client.url
+    ensure
+      ENV.delete("STORAGE_HOST_ALLOWLIST")
+    end
+  end
+
+  test "download blocks unexpected storage host" do
+    job = create_job_for_current_client
+    job.update!(status: :finished, output_key: "outputs/test.mp4")
+
+    stubbed_client = Struct.new(:url) do
+      def presign_download(_key)
+        url
+      end
+    end.new("https://evil.example/file.mp4")
+
+    with_stubbed_storage_client(stubbed_client) do
+      ENV["STORAGE_HOST_ALLOWLIST"] = "download.example.test"
+      get download_video_job_path(job)
+      assert_redirected_to video_job_path(job)
+      follow_redirect!
+      assert_match "Download host is not trusted", @response.body
+    ensure
+      ENV.delete("STORAGE_HOST_ALLOWLIST")
+    end
+  end
+
   private
 
   def create_job_for_current_client

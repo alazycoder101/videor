@@ -36,6 +36,7 @@ Set these env vars (include them in `.env` or your process manager):
 | `AWS_REGION` | Defaults to `us-east-1` |
 | `S3_ENDPOINT` | Optional; set to `http://localhost:9000` for MinIO |
 | `VIDEO_JOBS_BUCKET` | Bucket that stores audio, images, and generated MP4 files |
+| `STORAGE_HOST_ALLOWLIST` | Comma-separated hostnames allowed for download redirects (required for secure presigned redirects) |
 
 Create the bucket manually (or via `aws s3api create-bucket` / MinIO UI) before uploading.
 
