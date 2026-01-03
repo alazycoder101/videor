@@ -72,6 +72,16 @@ helm install videor ./chart \
 
 Adjust `values.yaml` or pass overrides for replica counts, Redis settings, etc. If you already run Redis externally, set `redis.enabled=false` and point `env.REDIS_URL` at your service.
 
+### On-prem helper script
+
+For simple on-prem builds, copy `.deploy.env.example` to `.deploy.env`, fill in registry/secrets, then run:
+
+```bash
+scripts/deploy_onprem.sh
+```
+
+The script builds & pushes the Docker image and executes `helm upgrade --install` using the provided values. Set `KUBE_CONTEXT` inside `.deploy.env` if you need to target a specific kubeconfig context.
+
 ## Runtime configuration
 
 The container expects the same environment variables documented in `docs/development.md` (database, Redis, storage credentials, etc.). When running with Kamal or in CI, be sure to provide:
