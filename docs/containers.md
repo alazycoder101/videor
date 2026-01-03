@@ -39,6 +39,21 @@ docker compose up --build
 
 The compose file mounts the repo into `/rails` so code changes hot-reload. Tailwind watcher is not started inside the container by default, so if you edit Tailwind CSS classes run `mise exec -- bin/rails tailwindcss:build` on the host (or add another compose service). Redis is exposed on `6379`, MinIO console on `9001`, and the Rails server on `3000`.
 
+## K3s manifests
+
+The `k8s/` directory contains basic YAML manifests for a web deployment, Sidekiq worker, and Redis service. Steps:
+
+1. Update `k8s/deployment.yml` with your registry image (`ghcr.io/<owner>/<repo>:<tag>`) and download host.
+2. Create a secret manifest (or use `kubectl create secret generic videor-secrets --from-literal=...`) with `RAILS_MASTER_KEY`, DB URL, Redis URL, AWS credentials, `VIDEO_JOBS_BUCKET`, etc.
+3. Apply resources:
+   ```bash
+   kubectl apply -f k8s/redis.yml
+   kubectl apply -f k8s/deployment.yml
+   ```
+4. Add your ingress of choice (Traefik in k3s) with a rule pointing to the `videor-web` service.
+
+For a more configurable setup, consider generating a Helm chart that parameterizes replica counts, image tags, and secrets; the current YAML is intentionally minimal to keep k3s experimentation straightforward.
+
 ## Runtime configuration
 
 The container expects the same environment variables documented in `docs/development.md` (database, Redis, storage credentials, etc.). When running with Kamal or in CI, be sure to provide:
