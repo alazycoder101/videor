@@ -1,0 +1,6 @@
+[tools]
+ruby = "4.0.0"
+node = "lts"
+
+[tasks.dev]
+run = "mise exec -- bin/dev"

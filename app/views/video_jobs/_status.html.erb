@@ -1,0 +1,24 @@
+<div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+  <% if video_job.queued? %>
+    <p class="text-base font-semibold text-slate-900">Queued</p>
+    <p class="text-sm text-slate-600">We are waiting for a worker to pick up this request.</p>
+  <% elsif video_job.processing? %>
+    <p class="text-base font-semibold text-slate-900">Processing</p>
+    <p class="text-sm text-slate-600">ffmpeg is combining your audio and cover image. This page will update automatically.</p>
+  <% elsif video_job.finished? %>
+    <p class="text-base font-semibold text-slate-900">Finished</p>
+    <p class="text-sm text-slate-600">Download the MP4 or drop it directly into YouTube Studio.</p>
+    <div class="mt-4">
+      <%= link_to "Download video", download_video_job_path(video_job),
+                  class: "inline-flex items-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-500" %>
+    </div>
+  <% else %>
+    <p class="text-base font-semibold text-rose-600">Failed</p>
+    <p class="text-sm text-slate-600">
+      <%= video_job.error_message.presence || "ffmpeg reported an unexpected error. Try again or swap in different files." %>
+    </p>
+    <div class="mt-4">
+      <%= link_to "Try again", new_video_job_path, class: "font-semibold text-sky-600 hover:text-sky-500" %>
+    </div>
+  <% end %>
+</div>

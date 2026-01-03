@@ -1,0 +1,17 @@
+<% content_for :title, "Create a video" %>
+
+<section class="mx-auto w-full max-w-2xl space-y-8">
+  <header class="space-y-2">
+    <p class="text-sm font-medium uppercase tracking-wide text-slate-500">Hotwire workflow</p>
+    <h1 class="text-3xl font-semibold text-slate-900">Create a new video</h1>
+    <p class="text-base text-slate-600">
+      Upload an audio track and an image. We will stitch them together on the server with ffmpeg and keep you updated via Turbo Streams.
+    </p>
+  </header>
+
+  <%= render "form", video_job: @video_job %>
+
+  <p class="text-sm text-slate-500">
+    <%= link_to "View my recent videos", video_jobs_path, class: "font-semibold text-sky-600 hover:text-sky-500" %>
+  </p>
+</section>

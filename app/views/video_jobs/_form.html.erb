@@ -1,0 +1,55 @@
+<%= form_with model: video_job, data: {
+      controller: "job-form",
+      action: "upload:complete->job-form#refresh upload:reset->job-form#refresh"
+    }, class: "space-y-8" do |form| %>
+  <% if video_job.errors.any? %>
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      <p class="font-semibold"><%= pluralize(video_job.errors.count, "issue") %> prevented submission:</p>
+      <ul class="mt-2 list-disc space-y-1 pl-5">
+        <% video_job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="space-y-2" data-controller="upload"
+       data-upload-purpose-value="audio"
+       data-upload-presign-url-value="<%= uploads_presign_path %>">
+    <div class="flex items-center justify-between">
+      <label class="text-sm font-medium text-slate-700">Audio track</label>
+      <p class="text-xs text-slate-500">Up to 150 MB</p>
+    </div>
+    <input type="file"
+           accept="audio/*"
+           data-upload-target="input"
+           data-action="change->upload#start"
+           class="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-white px-3 py-6 text-sm text-slate-600 outline-none transition hover:border-slate-400 focus:border-sky-500">
+    <progress max="100" value="0" data-upload-target="progress" class="h-2 w-full overflow-hidden rounded-full bg-slate-100 text-sky-500"></progress>
+    <%= form.hidden_field :audio_key, data: { upload_target: "hidden", job_form_target: "required" } %>
+    <p data-upload-target="status" class="hidden text-sm font-medium text-rose-600"></p>
+  </div>
+
+  <div class="space-y-2" data-controller="upload"
+       data-upload-purpose-value="image"
+       data-upload-presign-url-value="<%= uploads_presign_path %>">
+    <div class="flex items-center justify-between">
+      <label class="text-sm font-medium text-slate-700">Cover image</label>
+      <p class="text-xs text-slate-500">JPEG or PNG</p>
+    </div>
+    <input type="file"
+           accept="image/*"
+           data-upload-target="input"
+           data-action="change->upload#start"
+           class="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-white px-3 py-6 text-sm text-slate-600 outline-none transition hover:border-slate-400 focus:border-sky-500">
+    <progress max="100" value="0" data-upload-target="progress" class="h-2 w-full overflow-hidden rounded-full bg-slate-100 text-sky-500"></progress>
+    <%= form.hidden_field :image_key, data: { upload_target: "hidden", job_form_target: "required" } %>
+    <p data-upload-target="status" class="hidden text-sm font-medium text-rose-600"></p>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <%= form.submit "Create video", data: { job_form_target: "submit" },
+                    class: "inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-300",
+                    disabled: true %>
+    <p class="text-sm text-slate-500">Your uploads stay tied to this browser via a cookie.</p>
+  </div>
+<% end %>

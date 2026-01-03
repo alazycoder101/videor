@@ -1,0 +1,26 @@
+<% content_for :title, "Video request ##{@video_job.id}" %>
+
+<%= turbo_stream_from @video_job %>
+
+<section class="mx-auto w-full max-w-3xl space-y-8">
+  <header class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+    <div>
+      <p class="text-sm uppercase tracking-wide text-slate-500">Job ID <%= @video_job.id %></p>
+      <h1 class="text-3xl font-semibold text-slate-900">Your video is on its way</h1>
+    </div>
+    <div class="flex gap-3 text-sm">
+      <%= link_to "New upload", new_video_job_path, class: "font-medium text-slate-600 hover:text-slate-900" %>
+      <%= link_to "Recent jobs", video_jobs_path, class: "font-medium text-sky-600 hover:text-sky-500" %>
+    </div>
+  </header>
+
+  <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h2 class="text-base font-semibold text-slate-900">Status</h2>
+    <%= turbo_frame_tag dom_id(@video_job, :status),
+                        data: { controller: "status-poll",
+                                status_poll_url_value: status_video_job_path(@video_job),
+                                status_poll_interval_value: 5000 } do %>
+      <%= render "status", video_job: @video_job %>
+    <% end %>
+  </div>
+</section>
