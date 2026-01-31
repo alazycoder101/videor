@@ -67,7 +67,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "aws-sdk-s3", "~> 1.209"
+gem "aws-sdk-s3", "~> 1.213"
 
 gem "sidekiq", "~> 8.1"
 
